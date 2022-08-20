@@ -12,7 +12,30 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(express.static("public"));
 
-//TODO
+//to set up mongodb we are using mongoose(setup a connection to mongodb)
+
+mongoose.connect("mongodb://localhost:27017/wikiDB", {useNewUrlParser: true});
+
+const articleSchema = {
+    title: String,
+    content: String
+};
+const Article = mongoose.model("Article", articleSchema);
+
+app.get("/articles", function(req,res){
+    Article.find(function(err, foundArticles){
+        if(!err){
+            res.send(foundArticles);
+        }else{
+        res.send(err);
+        }
+    });
+});
+
+app.post("/articles", function(req,res){
+    console.log(req.body.title);
+    console.log(req.body.content);
+});
 
 app.listen(3000, function(){
     console.log("Server started on port 3000");
