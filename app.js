@@ -1,6 +1,6 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const ejs = require("ejs");
+const bodyParser = require("body-parser");
 const mongoose = require('mongoose');
 
 const app = express();
@@ -13,7 +13,6 @@ app.use(bodyParser.urlencoded({
 app.use(express.static("public"));
 
 //to set up mongodb we are using mongoose(setup a connection to mongodb)
-
 mongoose.connect("mongodb://localhost:27017/wikiDB", {useNewUrlParser: true});
 
 const articleSchema = {
@@ -22,7 +21,10 @@ const articleSchema = {
 };
 const Article = mongoose.model("Article", articleSchema);
 
-app.get("/articles", function(req,res){
+app.route("/articles")
+
+//GET Request
+.get(function(req,res){
     Article.find(function(err, foundArticles){
         if(!err){
             res.send(foundArticles);
@@ -30,9 +32,10 @@ app.get("/articles", function(req,res){
         res.send(err);
         }
     });
-});
+})
 
-app.post("/articles", function(req,res){
+//Here the post req targets the article routes and creates a new article using the data that was submitted through the post request and then we save the new article and check wt for loop for errors if any
+.post(function(req,res){
     console.log();
     console.log();
 
@@ -40,7 +43,26 @@ app.post("/articles", function(req,res){
         title: req.body.title,
         content: req.body.content
     });
-    newArticle.save();
+    newArticle.save(function(err){
+        if(!err){
+            res.send("Successfully added a new article.");
+        }else
+        {
+            res.send(err);
+        }
+    });
+})
+
+//DELETE METHOD
+.delete(function(req,res)
+{ Article.deleteMany(function(err){
+    if(!err)
+    {
+        res.send("Successfully deleted all articles.")
+    }else{
+        res.send(err);
+    }
+    });
 });
 
 app.listen(3000, function(){
