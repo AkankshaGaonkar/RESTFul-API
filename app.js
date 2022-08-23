@@ -21,7 +21,6 @@ const articleSchema = {
 };
 const Article = mongoose.model("Article", articleSchema);
 
-const Fruit = mongoose.model("Fruit",articleSchema);
 ////////////////////////////////Request targeting All Articles///////////////////////////////
 app.route("/articles")
 
@@ -32,17 +31,6 @@ app.route("/articles")
             res.send(foundArticles);
         }else{
         res.send(err);
-        }
-    });
-})
-
-.get(function(req,res){
-    Fruit.find(function(err, getfruit){
-        if(!err)
-        {
-            res.send(getfruit);
-        }else{
-            res.send(err);
         }
     });
 })
@@ -80,7 +68,18 @@ app.route("/articles")
 
 ////////////////////////////////Request targeting Specific Article///////////////////////////////
 
-app.route("/articles/")
+app.route("/articles/:articleTitle")
+.get(function(req,res){
+    Article.findOne({title: req.params.articleTitle}, function(err, foundArticle){
+    if(foundArticle){
+            res.send(foundArticle);
+        }else{
+            res.send("No article matching that title was found");
+        }
+    });
+});
+
+
 app.listen(3000, function(){
     console.log("Server started on port 3000");
 });
