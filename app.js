@@ -69,6 +69,8 @@ app.route("/articles")
 ////////////////////////////////Request targeting Specific Article///////////////////////////////
 
 app.route("/articles/:articleTitle")
+
+//GET REQUEST 
 .get(function(req,res){
     Article.findOne({title: req.params.articleTitle}, function(err, foundArticle){
     if(foundArticle){
@@ -77,9 +79,21 @@ app.route("/articles/:articleTitle")
             res.send("No article matching that title was found");
         }
     });
+})
+
+//POST REQUEST
+.put(function(req,res){
+    Article.updateMany(
+        {title: req.params.articleTitle},
+        {title:req.body.title, content: req.body.content},
+        {overwrite:true},
+        function(err){
+            if(!err){
+                res.send("Successfully updated the article.");
+            }
+        });
 });
-
-
+    
 app.listen(3000, function(){
     console.log("Server started on port 3000");
 });
